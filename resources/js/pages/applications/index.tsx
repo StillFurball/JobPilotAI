@@ -21,6 +21,7 @@ import { formatDate, shortHash } from '@/lib/jobpilot';
 import { index as applicationsIndex, send } from '@/routes/applications';
 import { index as draftsIndex } from '@/routes/drafts';
 import type { Application } from '@/types';
+import PageHeader from '@/components/page-header';
 
 type Props = {
     applications: Application[];
@@ -59,7 +60,12 @@ export default function ApplicationsIndex({
     return (
         <>
             <Head title="Application tracker" />
-            <div className="flex h-full flex-1 flex-col gap-4 p-4">
+            <div className="mx-auto flex h-full w-full max-w-7xl flex-1 flex-col gap-6 p-4 sm:p-6">
+                <PageHeader
+                    title="Application tracker"
+                    description="Approved applications and what happened to them after you signed off."
+                />
+
                 <Card>
                     <CardHeader className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                         <div className="space-y-1.5">
@@ -91,7 +97,7 @@ export default function ApplicationsIndex({
                     </CardHeader>
                     {!sendEnabled && (
                         <CardContent>
-                            <div className="flex items-start gap-2 rounded-md border border-blue-200 bg-blue-50 p-3 text-sm text-blue-900 dark:border-blue-900/50 dark:bg-blue-950/50 dark:text-blue-100">
+                            <div className="flex items-start gap-2 rounded-md border-l-4 border-l-strip bg-strip-soft p-3 text-foreground">
                                 <ShieldAlert className="mt-0.5 size-4 shrink-0" />
                                 <span>
                                     Safe mode: sending re-verifies the approval
@@ -129,7 +135,7 @@ export default function ApplicationsIndex({
                             <CardContent className="flex flex-col gap-4 px-4 lg:flex-row lg:items-center lg:justify-between">
                                 <div className="min-w-0 space-y-2">
                                     <div className="flex flex-wrap items-center gap-2">
-                                        <span className="font-semibold">
+                                        <span className="text-lg font-bold">
                                             {application.job_listing?.title ??
                                                 `Application #${application.id}`}
                                         </span>
@@ -150,14 +156,14 @@ export default function ApplicationsIndex({
                                         </span>
                                         <span className="flex items-center gap-1">
                                             <Hash className="size-3.5" />
-                                            <code className="text-xs">
+                                            <code className="font-mono text-sm">
                                                 {shortHash(
                                                     application.sent_content_hash,
                                                 )}
                                             </code>
                                         </span>
                                     </div>
-                                    <div className="text-xs text-muted-foreground">
+                                    <div className="text-sm text-muted-foreground">
                                         Approved{' '}
                                         {formatDate(application.approved_at)}
                                         {application.sent_at && (
@@ -176,7 +182,7 @@ export default function ApplicationsIndex({
                                         </div>
                                     )}
                                 </div>
-                                <div className="flex shrink-0 gap-2">
+                                <div className="flex flex-wrap gap-2 lg:shrink-0">
                                     <Button variant="outline" size="sm" asChild>
                                         <Link
                                             href={draftsIndex({

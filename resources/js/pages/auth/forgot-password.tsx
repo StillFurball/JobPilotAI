@@ -15,7 +15,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
             <Head title="Forgot password" />
 
             {status && (
-                <div className="mb-4 text-center text-sm font-medium text-green-600">
+                <div className="mb-6 rounded-md border border-clear/30 bg-clear-soft px-3 py-2 text-sm font-medium text-clear">
                     {status}
                 </div>
             )}
@@ -40,6 +40,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
 
                             <div className="my-6 flex items-center justify-start">
                                 <Button
+                                    size="lg"
                                     className="w-full"
                                     disabled={processing}
                                     data-test="email-password-reset-link-button"
@@ -65,5 +66,6 @@ export default function ForgotPassword({ status }: { status?: string }) {
 
 ForgotPassword.layout = {
     title: 'Forgot password',
-    description: 'Enter your email to receive a password reset link',
+    description:
+        'Enter your account email and we’ll send you a link to set a new password.',
 };
