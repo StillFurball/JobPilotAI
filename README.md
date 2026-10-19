@@ -18,8 +18,9 @@ An AI-assisted job seeker built with Laravel 13, Inertia v3 and React. JobPilot 
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/<your-username>/<your-repo>.git
-cd <your-repo>
+git clone https://github.com/StillFurball/JobPilotAI.git
+
+cd JobPilotAI
 ```
 
 ### 2. Install dependencies
