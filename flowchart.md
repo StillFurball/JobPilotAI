@@ -10,20 +10,20 @@ Aksi pengguna Proses sistem Agent AI / LLM Database Ditolak / gagal Selesai
 
 ## 01Alur utama pengguna
 
-Gambaran end-to-end: akun dan team dibuat lewat Fortify, pengguna mengisi profil kandidat, menjalankan workflow pencarian, lalu memilih lowongan untuk dibuatkan draft lamaran yang wajib direview sebelum dikirim.
+Gambaran end-to-end: akun dibuat lewat Fortify, pengguna mengisi profil kandidat, menjalankan workflow pencarian, lalu memilih lowongan untuk dibuatkan draft lamaran yang wajib direview sebelum dikirim.
 
 `routes/web.php``CreateNewUser``pages/*`
 
 ```mermaid
 flowchart TD
   A(["Mulai"]) --> B{"Sudah punya akun?"}
-  B -- Tidak --> C["Register via Fortifyotomatis dibuat Personal Team"]
+  B -- Tidak --> C["Register via Fortify"]
   B -- Ya --> D["Login"]
   D --> D2{"2FA aktif?"}
   D2 -- Ya --> D3["Masukkan kode 2FA"]
   D2 -- Tidak --> E
   D3 --> E
-  C --> E["Dashboard team"]
+  C --> E["Dashboard"]
   E --> F["Isi Candidate Profileskills, pendidikan, pengalaman,preferensi lokasi & tipe kerja"]
   F --> G["Jalankan workflowkeywords, negara, tipe kerja, max jobs"]
   G --> H[["RunJobWorkflow di queuediscovery + matching"]]

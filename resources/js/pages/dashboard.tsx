@@ -8,13 +8,12 @@ import {
     Sparkles,
 } from 'lucide-react';
 import type { FormEvent } from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import GuardrailBanner from '@/components/jobpilot/guardrail-banner';
 import ScoreBadge from '@/components/jobpilot/score-badge';
 import StatusBadge from '@/components/jobpilot/status-badge';
 import InputError from '@/components/input-error';
 import PageHeader from '@/components/page-header';
-import PendingInvitationsModal from '@/components/pending-invitations-modal';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -39,15 +38,9 @@ import { index as draftsIndex } from '@/routes/drafts';
 import { index as jobsIndex } from '@/routes/jobs';
 import { store as storeDraft } from '@/routes/jobs/drafts';
 import { store as storeWorkflow } from '@/routes/workflows';
-import type {
-    CandidateProfile,
-    DashboardInvitation,
-    JobSummary,
-    WorkflowRun,
-} from '@/types';
+import type { CandidateProfile, JobSummary, WorkflowRun } from '@/types';
 
 type Props = {
-    pendingInvitations?: DashboardInvitation[];
     profile: Pick<
         CandidateProfile,
         | 'full_name'
@@ -69,17 +62,12 @@ type Props = {
 const ALL_TYPES = 'all';
 
 export default function Dashboard({
-    pendingInvitations = [],
     profile,
     stats,
     topMatches,
     latestWorkflow,
     adzunaConfigured,
 }: Props) {
-    const [showInvitations, setShowInvitations] = useState(
-        pendingInvitations.length > 0,
-    );
-
     const form = useForm({
         keywords: (profile.preferred_keywords?.length
             ? profile.preferred_keywords
@@ -141,11 +129,6 @@ export default function Dashboard({
     return (
         <>
             <Head title="Dashboard" />
-            <PendingInvitationsModal
-                invitations={pendingInvitations}
-                open={pendingInvitations.length > 0 && showInvitations}
-                onOpenChange={setShowInvitations}
-            />
 
             <div className="mx-auto flex h-full w-full max-w-7xl flex-1 flex-col gap-6 p-4 sm:p-6">
                 <PageHeader
@@ -491,11 +474,6 @@ export default function Dashboard({
     );
 }
 
-Dashboard.layout = (props: { currentTeam?: { slug: string } | null }) => ({
-    breadcrumbs: [
-        {
-            title: 'Dashboard',
-            href: props.currentTeam ? dashboard(props.currentTeam.slug) : '/',
-        },
-    ],
-});
+Dashboard.layout = {
+    breadcrumbs: [{ title: 'Dashboard', href: dashboard() }],
+};

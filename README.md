@@ -71,7 +71,7 @@ npm run build
 composer run dev
 ```
 
-This starts the web server, the queue worker and the Vite dev server together. Open <http://localhost:8000>, register an account and you will land on your team dashboard.
+This starts the web server, the queue worker and the Vite dev server together. Open <http://localhost:8000>, register an account and you will land on your dashboard.
 
 The queue worker is required — the discovery agent runs as a background job, so runs stay "pending" if it is not running. To start the processes separately:
 

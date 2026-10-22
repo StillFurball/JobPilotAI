@@ -122,8 +122,8 @@ function withTransition(update: () => void) {
 }
 
 export default function Welcome() {
-    const { auth, currentTeam } = usePage().props;
-    const dashboardUrl = currentTeam ? dashboard(currentTeam.slug) : '/';
+    const { auth } = usePage().props;
+    const dashboardUrl = dashboard();
 
     const [approved, setApproved] = useState<Record<number, string>>({});
 

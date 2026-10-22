@@ -11,7 +11,6 @@ import {
 import AppLogo from '@/components/app-logo';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
-import { TeamSwitcher } from '@/components/team-switcher';
 import {
     Sidebar,
     SidebarContent,
@@ -31,9 +30,7 @@ import type { NavItem } from '@/types';
 
 export function AppSidebar() {
     const page = usePage();
-    const dashboardUrl = page.props.currentTeam
-        ? dashboard(page.props.currentTeam.slug)
-        : '/';
+    const dashboardUrl = dashboard();
 
     const pendingDrafts = page.props.jobpilot?.pendingDrafts ?? 0;
 
@@ -84,11 +81,6 @@ export function AppSidebar() {
                                 <AppLogo />
                             </Link>
                         </SidebarMenuButton>
-                    </SidebarMenuItem>
-                </SidebarMenu>
-                <SidebarMenu>
-                    <SidebarMenuItem>
-                        <TeamSwitcher />
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarHeader>

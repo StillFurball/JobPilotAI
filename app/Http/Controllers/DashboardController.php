@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\ApplicationDraft;
 use App\Models\JobMatch;
-use App\Models\TeamInvitation;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -13,31 +12,10 @@ class DashboardController extends Controller
 {
     public function __invoke(Request $request): Response
     {
-        $email = strtolower($request->user()->email);
-
-        $pendingInvitations = TeamInvitation::query()
-            ->with(['inviter', 'team'])
-            ->whereRaw('LOWER(email) = ?', [$email])
-            ->whereNull('accepted_at')
-            ->where(fn ($query) => $query
-                ->whereNull('expires_at')
-                ->orWhere('expires_at', '>=', now()))
-            ->latest()
-            ->get()
-            ->map(fn (TeamInvitation $invitation) => [
-                'code' => $invitation->code,
-                'inviterName' => $invitation->inviter->name,
-                'team' => [
-                    'name' => $invitation->team->name,
-                    'slug' => $invitation->team->slug,
-                ],
-            ]);
-
         $user = $request->user();
         $profile = $user->profileOrCreate();
 
         return Inertia::render('dashboard', [
-            'pendingInvitations' => $pendingInvitations,
             'profile' => $profile->only(['full_name', 'preferred_keywords', 'preferred_countries', 'preferred_employment_types']),
             'stats' => [
                 'matchedJobs' => $user->jobMatches()->count(),

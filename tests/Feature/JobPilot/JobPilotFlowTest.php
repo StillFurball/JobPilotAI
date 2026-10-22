@@ -306,7 +306,7 @@ test('dashboard shows the users jobpilot stats', function () {
     $job = JobListing::factory()->create();
     $user->jobMatches()->create(['job_listing_id' => $job->id, 'score' => 0.8]);
 
-    $this->actingAs($user)->get(route('dashboard', ['current_team' => $user->currentTeam->slug]))
+    $this->actingAs($user)->get(route('dashboard'))
         ->assertInertia(fn (Assert $page) => $page
             ->component('dashboard')
             ->where('stats.matchedJobs', 1)
