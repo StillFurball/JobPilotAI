@@ -28,6 +28,12 @@ export default function Login({
         <>
             <Head title="Log in" />
 
+            {status && (
+                <div className="mb-6 rounded-md border border-clear/30 bg-clear-soft px-3 py-2 text-sm font-medium text-clear">
+                    {status}
+                </div>
+            )}
+
             {teamInvitation && (
                 <TeamInvitationAlert
                     invitation={teamInvitation}
@@ -77,7 +83,6 @@ export default function Login({
                                     required
                                     tabIndex={2}
                                     autoComplete="current-password"
-                                    placeholder="Password"
                                 />
                                 <InputError message={errors.password} />
                             </div>
@@ -93,7 +98,8 @@ export default function Login({
 
                             <Button
                                 type="submit"
-                                className="mt-4 w-full"
+                                size="lg"
+                                className="mt-2 w-full"
                                 tabIndex={4}
                                 disabled={processing}
                                 data-test="login-button"
@@ -104,7 +110,7 @@ export default function Login({
                         </div>
 
                         <div className="text-center text-sm text-muted-foreground">
-                            Don't have an account?{' '}
+                            New to JobPilot?{' '}
                             <TextLink
                                 href={register({
                                     query: {
@@ -114,23 +120,17 @@ export default function Login({
                                 data-test="register-link"
                                 tabIndex={5}
                             >
-                                Sign up
+                                Create an account
                             </TextLink>
                         </div>
                     </>
                 )}
             </Form>
-
-            {status && (
-                <div className="mb-4 text-center text-sm font-medium text-green-600">
-                    {status}
-                </div>
-            )}
         </>
     );
 }
 
 Login.layout = {
-    title: 'Log in to your account',
-    description: 'Enter your email and password below to log in',
+    title: 'Log in',
+    description: 'Pick up where your applications left off.',
 };

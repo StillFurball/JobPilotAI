@@ -11,10 +11,10 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
 const tones = {
-    green: 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-300',
-    amber: 'border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-300',
-    red: 'border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-900 dark:bg-rose-950 dark:text-rose-300',
-    blue: 'border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-900 dark:bg-blue-950 dark:text-blue-300',
+    green: 'border-clear/30 bg-clear-soft text-clear',
+    amber: 'border-caution/25 bg-taxiway-soft text-caution',
+    red: 'border-hold/30 bg-hold-soft text-hold',
+    blue: 'border-strip/30 bg-strip-soft text-strip',
 } as const;
 
 const statuses: Record<

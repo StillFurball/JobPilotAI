@@ -1,5 +1,5 @@
 import { Head, useForm } from '@inertiajs/react';
-import { Plus, Save, Trash2, UserRound } from 'lucide-react';
+import { Plus, Save, Trash2 } from 'lucide-react';
 import type { FormEvent, ReactNode } from 'react';
 import InputError from '@/components/input-error';
 import TagInput from '@/components/jobpilot/tag-input';
@@ -24,6 +24,7 @@ import type {
     ExperienceEntry,
     ProjectEntry,
 } from '@/types';
+import PageHeader from '@/components/page-header';
 
 type Props = { profile: CandidateProfile };
 
@@ -113,26 +114,20 @@ export default function CandidateEdit({ profile }: Props) {
             <Head title="Candidate profile" />
             <form
                 onSubmit={submit}
-                className="flex h-full flex-1 flex-col gap-4 p-4"
+                className="mx-auto flex h-full w-full max-w-7xl flex-1 flex-col gap-6 p-4 sm:p-6"
             >
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                    <div>
-                        <h1 className="flex items-center gap-2 text-xl font-semibold">
-                            <UserRound className="size-5" />
-                            Candidate profile & evidence
-                        </h1>
-                        <p className="text-sm text-muted-foreground">
-                            The agents only use what is written here. Nothing is
-                            invented for your CV or emails.
-                        </p>
-                    </div>
-                    <Button type="submit" disabled={form.processing}>
-                        <Save />
-                        Save profile
-                    </Button>
-                </div>
+                <PageHeader
+                    title="Candidate profile"
+                    description="JobPilot only uses what you write here. Nothing is invented for your CV or emails, so the more evidence you add, the better the matches."
+                    actions={
+                        <Button type="submit" disabled={form.processing}>
+                            <Save />
+                            Save profile
+                        </Button>
+                    }
+                />
 
-                <div className="grid gap-4 xl:grid-cols-2">
+                <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
                     <Card>
                         <CardHeader>
                             <CardTitle>Contact & summary</CardTitle>

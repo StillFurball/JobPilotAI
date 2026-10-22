@@ -35,6 +35,8 @@ import {
 import { index as jobsIndex } from '@/routes/jobs';
 import { store as storeDraft } from '@/routes/jobs/drafts';
 import type { JobListing, Paginated } from '@/types';
+import PageHeader from '@/components/page-header';
+import { cn } from '@/lib/utils';
 
 type Filters = {
     search: string;
@@ -82,7 +84,12 @@ export default function JobsIndex({ jobs, filters, candidateName }: Props) {
         <>
             <Head title="Job discovery" />
 
-            <div className="flex h-full flex-1 flex-col gap-4 p-4">
+            <div className="mx-auto flex h-full w-full max-w-7xl flex-1 flex-col gap-6 p-4 sm:p-6">
+                <PageHeader
+                    title="Job discovery"
+                    description="Every vacancy JobPilot has found, scored against your candidate profile. Open the match analysis to see why a role fits and what's missing."
+                />
+
                 <Card className="py-4">
                     <CardContent className="space-y-3 px-4">
                         <div className="grid gap-3 md:grid-cols-[1.5fr_1fr_1fr_1fr]">
@@ -211,12 +218,24 @@ export default function JobsIndex({ jobs, filters, candidateName }: Props) {
                         );
 
                         return (
-                            <Card key={job.id} className="gap-0 py-4">
-                                <CardContent className="space-y-3 px-4">
+                            <Card
+                                key={job.id}
+                                className={cn(
+                                    'gap-0 border-l-4 py-5',
+                                    !match
+                                        ? 'border-l-border'
+                                        : match.score >= 0.75
+                                          ? 'border-l-clear'
+                                          : match.score >= 0.5
+                                            ? 'border-l-taxiway'
+                                            : 'border-l-border',
+                                )}
+                            >
+                                <CardContent className="space-y-3 px-5">
                                     <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                                         <div className="min-w-0 space-y-2">
                                             <div className="flex flex-wrap items-center gap-2">
-                                                <h3 className="font-semibold">
+                                                <h3 className="text-lg leading-snug font-bold">
                                                     {job.title}
                                                 </h3>
                                                 {match && (
@@ -241,20 +260,23 @@ export default function JobsIndex({ jobs, filters, candidateName }: Props) {
                                                     <MapPin className="size-3.5" />
                                                     {job.location ??
                                                         'Unspecified'}{' '}
-                                                    ({job.country ?? '—'})
+                                                    (
+                                                    {job.country?.toUpperCase() ??
+                                                        '—'}
+                                                    )
                                                 </span>
                                                 {salary && (
-                                                    <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
+                                                    <span className="flex items-center gap-1 font-bold text-clear">
                                                         <Wallet className="size-3.5" />
                                                         {salary}
                                                     </span>
                                                 )}
-                                                <span className="uppercase">
-                                                    {job.source}
+                                                <span>
+                                                    Source: {job.source}
                                                 </span>
                                             </div>
                                         </div>
-                                        <div className="flex shrink-0 gap-2">
+                                        <div className="flex flex-wrap gap-2 lg:shrink-0">
                                             <Button
                                                 variant="outline"
                                                 size="sm"
@@ -293,7 +315,7 @@ export default function JobsIndex({ jobs, filters, candidateName }: Props) {
                                     </div>
 
                                     {!isOpen && (
-                                        <p className="line-clamp-2 text-sm text-muted-foreground">
+                                        <p className="line-clamp-2 max-w-[75ch] text-muted-foreground">
                                             {job.description}
                                         </p>
                                     )}
@@ -348,7 +370,7 @@ export default function JobsIndex({ jobs, filters, candidateName }: Props) {
 
                                                     <div className="grid gap-4 md:grid-cols-2">
                                                         <div>
-                                                            <div className="mb-2 flex items-center gap-1.5 text-sm font-medium text-emerald-600 dark:text-emerald-400">
+                                                            <div className="mb-2 flex items-center gap-1.5 font-bold text-clear">
                                                                 <CheckCircle2 className="size-4" />
                                                                 Skills verified
                                                                 in your profile
@@ -383,7 +405,7 @@ export default function JobsIndex({ jobs, filters, candidateName }: Props) {
                                                             </div>
                                                         </div>
                                                         <div>
-                                                            <div className="mb-2 flex items-center gap-1.5 text-sm font-medium text-amber-600 dark:text-amber-400">
+                                                            <div className="mb-2 flex items-center gap-1.5 font-bold text-caution">
                                                                 <AlertTriangle className="size-4" />
                                                                 Gaps to address
                                                             </div>
@@ -416,13 +438,13 @@ export default function JobsIndex({ jobs, filters, candidateName }: Props) {
                                                     </div>
 
                                                     {match.llm_analysis && (
-                                                        <div className="rounded-lg border border-primary/20 bg-primary/5 p-3">
-                                                            <div className="mb-1 flex items-center gap-1.5 text-xs font-semibold tracking-wide uppercase">
+                                                        <div className="max-w-[75ch] rounded-lg border-l-4 border-l-strip bg-strip-soft p-4">
+                                                            <div className="mb-1 flex items-center gap-1.5 text-sm font-bold text-strip">
                                                                 <Sparkles className="size-3" />
                                                                 Local AI career
                                                                 advisor
                                                             </div>
-                                                            <p className="text-sm">
+                                                            <p className="leading-relaxed">
                                                                 {
                                                                     match.llm_analysis
                                                                 }
@@ -439,10 +461,10 @@ export default function JobsIndex({ jobs, filters, candidateName }: Props) {
                                             )}
 
                                             <div>
-                                                <div className="mb-1 text-sm font-medium">
+                                                <div className="mb-2 font-bold">
                                                     Full description
                                                 </div>
-                                                <div className="max-h-60 overflow-y-auto rounded-lg border bg-muted/40 p-3 text-sm whitespace-pre-line text-muted-foreground">
+                                                <div className="max-h-96 max-w-[75ch] overflow-y-auto rounded-lg border bg-muted/40 p-4 leading-relaxed whitespace-pre-line text-foreground/85">
                                                     {job.description}
                                                 </div>
                                                 {job.application_url && (
@@ -452,7 +474,7 @@ export default function JobsIndex({ jobs, filters, candidateName }: Props) {
                                                         }
                                                         target="_blank"
                                                         rel="noreferrer"
-                                                        className="mt-2 inline-block text-sm text-primary underline-offset-4 hover:underline"
+                                                        className="mt-3 inline-block font-bold text-strip underline underline-offset-4"
                                                     >
                                                         Open original listing
                                                     </a>

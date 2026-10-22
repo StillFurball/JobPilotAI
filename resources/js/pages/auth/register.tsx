@@ -46,7 +46,7 @@ export default function Register({ passwordRules, teamInvitation }: Props) {
                                     tabIndex={1}
                                     autoComplete="name"
                                     name="name"
-                                    placeholder="Full name"
+                                    placeholder="As it should appear on your CV"
                                 />
                                 <InputError
                                     message={errors.name}
@@ -76,7 +76,6 @@ export default function Register({ passwordRules, teamInvitation }: Props) {
                                     tabIndex={3}
                                     autoComplete="new-password"
                                     name="password"
-                                    placeholder="Password"
                                     passwordrules={passwordRules}
                                 />
                                 <InputError message={errors.password} />
@@ -92,7 +91,6 @@ export default function Register({ passwordRules, teamInvitation }: Props) {
                                     tabIndex={4}
                                     autoComplete="new-password"
                                     name="password_confirmation"
-                                    placeholder="Confirm password"
                                     passwordrules={passwordRules}
                                 />
                                 <InputError
@@ -102,6 +100,7 @@ export default function Register({ passwordRules, teamInvitation }: Props) {
 
                             <Button
                                 type="submit"
+                                size="lg"
                                 className="mt-2 w-full"
                                 tabIndex={5}
                                 data-test="register-user-button"
@@ -138,6 +137,7 @@ export default function Register({ passwordRules, teamInvitation }: Props) {
 }
 
 Register.layout = {
-    title: 'Create an account',
-    description: 'Enter your details below to create your account',
+    title: 'Create your account',
+    description:
+        'After signing up, fill in your candidate profile. JobPilot builds every CV and email from it.',
 };

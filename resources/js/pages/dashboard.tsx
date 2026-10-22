@@ -1,21 +1,19 @@
 import { Head, Link, useForm, usePoll } from '@inertiajs/react';
 import {
-    ArrowUpRight,
-    Briefcase,
+    FileText,
     Loader2,
     MapPin,
     Play,
-    Send,
     ShieldCheck,
     Sparkles,
 } from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
 import type { FormEvent } from 'react';
 import { useEffect, useState } from 'react';
 import GuardrailBanner from '@/components/jobpilot/guardrail-banner';
 import ScoreBadge from '@/components/jobpilot/score-badge';
 import StatusBadge from '@/components/jobpilot/status-badge';
 import InputError from '@/components/input-error';
+import PageHeader from '@/components/page-header';
 import PendingInvitationsModal from '@/components/pending-invitations-modal';
 import { Button } from '@/components/ui/button';
 import {
@@ -35,6 +33,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { COUNTRIES, EMPLOYMENT_TYPES, employmentLabel } from '@/lib/jobpilot';
+import { cn } from '@/lib/utils';
 import { dashboard } from '@/routes';
 import { index as draftsIndex } from '@/routes/drafts';
 import { index as jobsIndex } from '@/routes/jobs';
@@ -128,36 +127,15 @@ export default function Dashboard({
         form.submit(storeWorkflow(), { preserveScroll: true });
     };
 
-    const statCards: {
-        label: string;
-        value: number;
-        icon: LucideIcon;
-        tone: string;
-    }[] = [
+    const statCells: { label: string; value: number; highlight?: boolean }[] = [
+        { label: 'Matched vacancies', value: stats.matchedJobs },
+        { label: 'High matches (70% or more)', value: stats.highMatches },
         {
-            label: 'Matched vacancies',
-            value: stats.matchedJobs,
-            icon: Briefcase,
-            tone: 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400',
-        },
-        {
-            label: 'High matches (≥70%)',
-            value: stats.highMatches,
-            icon: Sparkles,
-            tone: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
-        },
-        {
-            label: 'Awaiting approval',
+            label: 'Waiting for your approval',
             value: stats.pendingDrafts,
-            icon: ShieldCheck,
-            tone: 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
+            highlight: stats.pendingDrafts > 0,
         },
-        {
-            label: 'Sent applications',
-            value: stats.sentApplications,
-            icon: Send,
-            tone: 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400',
-        },
+        { label: 'Applications sent', value: stats.sentApplications },
     ];
 
     return (
@@ -169,10 +147,15 @@ export default function Dashboard({
                 onOpenChange={setShowInvitations}
             />
 
-            <div className="flex h-full flex-1 flex-col gap-6 p-4">
+            <div className="mx-auto flex h-full w-full max-w-7xl flex-1 flex-col gap-6 p-4 sm:p-6">
+                <PageHeader
+                    title="Dashboard"
+                    description="Find new vacancies, see how well they fit your profile and turn the best ones into drafts."
+                />
+
                 {stats.pendingDrafts > 0 && (
                     <GuardrailBanner
-                        title={`${stats.pendingDrafts} application draft(s) waiting for your approval`}
+                        title={`${stats.pendingDrafts} ${stats.pendingDrafts === 1 ? 'draft is' : 'drafts are'} waiting for your approval`}
                         action={
                             <Button size="sm" asChild>
                                 <Link href={draftsIndex()}>
@@ -186,33 +169,34 @@ export default function Dashboard({
                     </GuardrailBanner>
                 )}
 
-                <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                    {statCards.map((card) => (
-                        <Card key={card.label} className="py-4">
-                            <CardContent className="flex items-center gap-4 px-4">
-                                <div
-                                    className={`flex size-11 items-center justify-center rounded-lg ${card.tone}`}
-                                >
-                                    <card.icon className="size-5" />
-                                </div>
-                                <div>
-                                    <div className="text-2xl font-semibold tabular-nums">
-                                        {card.value}
-                                    </div>
-                                    <div className="text-sm text-muted-foreground">
-                                        {card.label}
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
+                <dl className="grid grid-cols-2 overflow-hidden rounded-xl border bg-card xl:grid-cols-4">
+                    {statCells.map((cell, index) => (
+                        <div
+                            key={cell.label}
+                            className={cn(
+                                'flex flex-col-reverse justify-end gap-1 border-border px-5 py-4',
+                                index % 2 === 1 && 'border-l',
+                                index >= 2 && 'border-t xl:border-t-0',
+                                index === 2 && 'xl:border-l',
+                                cell.highlight &&
+                                    'border-l-4 border-l-taxiway bg-taxiway-soft/60',
+                            )}
+                        >
+                            <dt className="text-sm text-muted-foreground">
+                                {cell.label}
+                            </dt>
+                            <dd className="font-display text-4xl leading-none font-bold tabular-nums">
+                                {cell.value}
+                            </dd>
+                        </div>
                     ))}
-                </div>
+                </dl>
 
-                <div className="grid gap-6 lg:grid-cols-2">
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                     <Card>
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
-                                <Sparkles className="size-4 text-primary" />
+                                <Sparkles className="size-4 text-strip" />
                                 Discovery & matching agent
                             </CardTitle>
                             <CardDescription>
@@ -372,7 +356,7 @@ export default function Dashboard({
                                         {latestWorkflow.status ===
                                             'completed' &&
                                             latestWorkflow.error_message && (
-                                                <span className="w-full text-amber-600 dark:text-amber-400">
+                                                <span className="w-full text-caution">
                                                     {
                                                         latestWorkflow.error_message
                                                     }
@@ -426,14 +410,14 @@ export default function Dashboard({
                                     >
                                         <div className="min-w-0">
                                             <div className="flex items-center gap-2">
-                                                <span className="truncate font-medium">
+                                                <span className="truncate font-bold">
                                                     {match.job.title}
                                                 </span>
                                                 <ScoreBadge
                                                     score={match.score}
                                                 />
                                             </div>
-                                            <div className="mt-1 flex flex-wrap items-center gap-x-3 text-xs text-muted-foreground">
+                                            <div className="mt-1 flex flex-wrap items-center gap-x-3 text-sm text-muted-foreground">
                                                 <span>
                                                     {match.job.company ??
                                                         'Unknown'}
@@ -460,8 +444,8 @@ export default function Dashboard({
                                                 href={storeDraft(match.job.id)}
                                                 as="button"
                                             >
+                                                <FileText />
                                                 Tailor & draft
-                                                <ArrowUpRight />
                                             </Link>
                                         </Button>
                                     </div>
@@ -474,7 +458,7 @@ export default function Dashboard({
                 <Card>
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
-                            <ShieldCheck className="size-4 text-emerald-600" />
+                            <ShieldCheck className="size-4 text-clear" />
                             How the guardrails protect you
                         </CardTitle>
                     </CardHeader>
@@ -493,13 +477,8 @@ export default function Dashboard({
                                 body: 'Emails only go to the application address published in the vacancy — addresses are never guessed.',
                             },
                         ].map((item) => (
-                            <div
-                                key={item.title}
-                                className="rounded-lg border p-4"
-                            >
-                                <h3 className="text-sm font-medium">
-                                    {item.title}
-                                </h3>
+                            <div key={item.title}>
+                                <h3 className="font-bold">{item.title}</h3>
                                 <p className="mt-1 text-sm text-muted-foreground">
                                     {item.body}
                                 </p>

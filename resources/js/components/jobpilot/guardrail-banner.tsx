@@ -12,10 +12,10 @@ export default function GuardrailBanner({
     action?: ReactNode;
 }) {
     return (
-        <Alert className="border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-900/60 dark:bg-amber-950/40 dark:text-amber-100 [&>svg]:text-amber-600 dark:[&>svg]:text-amber-400">
+        <Alert className="border-l-4 border-caution/25 border-l-taxiway bg-taxiway-soft text-foreground [&>svg]:text-caution">
             <ShieldCheck />
-            <AlertTitle>{title}</AlertTitle>
-            <AlertDescription className="text-amber-900/80 dark:text-amber-100/80">
+            <AlertTitle className="font-bold">{title}</AlertTitle>
+            <AlertDescription className="text-foreground/80">
                 <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>{children}</div>
                     {action}

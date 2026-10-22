@@ -99,14 +99,14 @@ export function AppSidebar() {
             </SidebarContent>
 
             <SidebarFooter>
-                <div className="mx-2 mt-auto rounded-lg border border-sidebar-border/70 p-3 text-xs group-data-[collapsible=icon]:hidden">
-                    <div className="flex items-center gap-1.5 font-medium text-amber-600 dark:text-amber-400">
-                        <Lock className="size-3" />
-                        Human-in-the-loop gate
+                <div className="mx-2 mt-auto rounded-lg border border-l-4 border-sidebar-border border-l-taxiway bg-sidebar p-3 text-sm group-data-[collapsible=icon]:hidden">
+                    <div className="flex items-center gap-1.5 font-bold text-foreground">
+                        <Lock className="size-3.5 text-caution" />
+                        Approval required
                     </div>
                     <p className="mt-1 text-muted-foreground">
-                        Nothing is sent without your explicit, hash-bound
-                        approval.
+                        Drafts wait for you. Editing one after approval cancels
+                        the approval.
                     </p>
                 </div>
                 <NavUser />

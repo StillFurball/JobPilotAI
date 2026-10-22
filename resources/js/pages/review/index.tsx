@@ -48,6 +48,7 @@ import {
 } from '@/routes/drafts';
 import { index as jobsIndex } from '@/routes/jobs';
 import type { ApplicationDraft, ApprovalRecord } from '@/types';
+import PageHeader from '@/components/page-header';
 
 type Props = {
     drafts: ApplicationDraft[];
@@ -85,8 +86,13 @@ export default function ReviewIndex({ drafts, selected }: Props) {
     return (
         <>
             <Head title="Review & approval" />
-            <div className="flex h-full flex-1 flex-col gap-4 p-4">
-                <GuardrailBanner title="Human-in-the-loop approval gate">
+            <div className="mx-auto flex h-full w-full max-w-7xl flex-1 flex-col gap-6 p-4 sm:p-6">
+                <PageHeader
+                    title="Review & approval"
+                    description="Read each draft as the recruiter will see it. Edit anything you like, then approve the exact version you want sent."
+                />
+
+                <GuardrailBanner title="Nothing is sent without your approval">
                     JobPilot never sends an application automatically. Changing
                     the recipient, subject, body or CV changes the SHA-256
                     fingerprint and invalidates earlier approvals.
@@ -164,7 +170,7 @@ function DraftEditor({
     >;
 
     return (
-        <div className="grid gap-4 xl:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
             <Card>
                 <CardHeader className="flex flex-row items-start justify-between gap-4">
                     <div className="space-y-1.5">
@@ -190,7 +196,7 @@ function DraftEditor({
                             {draft.recipient_verified ? (
                                 <Badge
                                     variant="outline"
-                                    className="text-emerald-600"
+                                    className="border-clear/30 bg-clear-soft text-clear"
                                 >
                                     <UserCheck />
                                     From the job listing
@@ -198,7 +204,7 @@ function DraftEditor({
                             ) : (
                                 <Badge
                                     variant="outline"
-                                    className="text-amber-600"
+                                    className="border-caution/25 bg-taxiway-soft text-caution"
                                 >
                                     <AlertTriangle />
                                     Needs manual entry
@@ -235,7 +241,7 @@ function DraftEditor({
                         <div className="flex items-center justify-between">
                             <Label htmlFor="body">Body</Label>
                             {edit.isDirty && (
-                                <span className="text-xs text-amber-600">
+                                <span className="text-sm font-bold text-caution">
                                     Unsaved — save to recompute the hash
                                 </span>
                             )}
@@ -243,7 +249,7 @@ function DraftEditor({
                         <Textarea
                             id="body"
                             disabled={locked}
-                            className="min-h-72 font-mono text-[13px]"
+                            className="min-h-80 text-base leading-relaxed"
                             value={edit.data.body}
                             onChange={(e) =>
                                 edit.setData('body', e.target.value)
@@ -269,7 +275,7 @@ function DraftEditor({
                             <Hash className="size-3" />
                             Bound content fingerprint (SHA-256)
                         </div>
-                        <code className="text-xs break-all">
+                        <code className="font-mono text-sm break-all">
                             {draft.content_hash ?? 'pending'}
                         </code>
                     </div>
@@ -304,7 +310,7 @@ function DraftEditor({
                             Reject draft
                         </Button>
                         <Button
-                            className="bg-emerald-600 text-white hover:bg-emerald-600/90"
+                            className="bg-clear font-bold text-white hover:bg-clear/90 dark:text-[#10241a]"
                             disabled={
                                 review.processing || locked || edit.isDirty
                             }
@@ -376,7 +382,7 @@ function DraftEditor({
                 </CardHeader>
                 <CardContent className="flex flex-1 flex-col gap-3">
                     <div className="rounded-md border bg-muted/40 p-2">
-                        <code className="text-xs break-all text-muted-foreground">
+                        <code className="font-mono text-sm break-all text-muted-foreground">
                             CV SHA-256: {draft.cv_file_hash ?? '—'}
                         </code>
                     </div>

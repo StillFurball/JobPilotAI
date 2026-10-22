@@ -13,8 +13,15 @@ export default defineConfig({
             input: ['resources/css/app.css', 'resources/js/app.tsx'],
             refresh: true,
             fonts: [
-                bunny('Instrument Sans', {
-                    weights: [400, 500, 600],
+                bunny('Atkinson Hyperlegible Next', {
+                    weights: [400, 500, 700],
+                }),
+                bunny('Barlow Condensed', {
+                    weights: [600, 700],
+                }),
+                bunny('Atkinson Hyperlegible Mono', {
+                    weights: [400, 500],
+                    preload: false,
                 }),
             ],
         }),
