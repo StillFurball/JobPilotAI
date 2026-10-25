@@ -1,6 +1,9 @@
 <?php
 
+use App\Models\MailAccount;
 use App\Models\User;
+use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Support\Facades\Notification;
 
 test('profile page is displayed', function () {
     $user = User::factory()->create();
@@ -31,6 +34,23 @@ test('profile information can be updated', function () {
     expect($user->name)->toBe('Test User');
     expect($user->email)->toBe('test@example.com');
     expect($user->email_verified_at)->toBeNull();
+});
+
+test('changing the email disconnects the mailbox and sends a new verification link', function () {
+    Notification::fake();
+
+    $user = User::factory()->create();
+    MailAccount::factory()->for($user)->create();
+
+    $this->actingAs($user)
+        ->patch(route('profile.update'), [
+            'name' => $user->name,
+            'email' => 'new@example.com',
+        ])
+        ->assertSessionHasNoErrors();
+
+    expect($user->mailAccount()->exists())->toBeFalse();
+    Notification::assertSentTo($user, VerifyEmail::class);
 });
 
 test('email verification status is unchanged when the email address is unchanged', function () {

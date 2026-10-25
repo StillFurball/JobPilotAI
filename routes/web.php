@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'welcome')->name('home');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::get('dashboard', DashboardController::class)->name('dashboard');
 });
 
@@ -25,7 +25,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 |
 */
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::get('candidate-profile', [CandidateProfileController::class, 'edit'])->name('candidate.edit');
     Route::put('candidate-profile', [CandidateProfileController::class, 'update'])->name('candidate.update');
 

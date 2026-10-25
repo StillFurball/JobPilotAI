@@ -113,7 +113,18 @@ Adzuna only covers certain countries (e.g. `sg`, `us`, `gb`, `au`, `in` — not 
 
 ### Sending applications
 
-Sending is disabled by default (safe mode): approval is verified but no email leaves the app. To send for real, configure a mailer and enable it:
+Sending is disabled by default (safe mode): approval is verified but no email leaves the app. To send for real, enable it:
+
+```dotenv
+JOBPILOT_SEND_EMAILS=true
+```
+
+Applications are sent **from the user's own login email**, through their own mailbox:
+
+1. **Verify the login email.** A verification link is emailed on registration. Users can use the app before verifying, but can't send applications until they do.
+2. **Connect the mailbox** in *Settings → Email* with an app password (Gmail / Google Workspace, Yahoo or iCloud). JobPilot signs in once to check it, then stores it encrypted. Sent applications appear in the user's own Sent folder.
+
+Verification links and password resets go through the app's own mailer, so configure one for those emails to arrive (with `MAIL_MAILER=log` they are written to `storage/logs/laravel.log` instead):
 
 ```dotenv
 MAIL_MAILER=smtp
@@ -121,9 +132,7 @@ MAIL_HOST=...
 MAIL_PORT=587
 MAIL_USERNAME=...
 MAIL_PASSWORD=...
-MAIL_FROM_ADDRESS=you@example.com
-
-JOBPILOT_SEND_EMAILS=true
+MAIL_FROM_ADDRESS=no-reply@example.com
 ```
 
 After changing `.env`, run `php artisan config:clear`.

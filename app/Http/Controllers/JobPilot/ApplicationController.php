@@ -31,6 +31,11 @@ class ApplicationController extends Controller
         return Inertia::render('applications/index', [
             'applications' => $applications,
             'sendEnabled' => app(ApplicationDispatcher::class)->enabled(),
+            'sender' => [
+                'email' => $request->user()->email,
+                'emailVerified' => $request->user()->hasVerifiedEmail(),
+                'mailboxConnected' => $request->user()->mailAccount()->exists(),
+            ],
         ]);
     }
 
@@ -58,6 +63,10 @@ class ApplicationController extends Controller
             throw ValidationException::withMessages(['application' => __('Draft content changed after approval — re-approval required.')]);
         }
 
+        if (! $request->user()->hasVerifiedEmail()) {
+            throw ValidationException::withMessages(['application' => __('Verify your email address before sending applications.')]);
+        }
+
         if (! $dispatcher->enabled()) {
             Inertia::flash('toast', [
                 'type' => 'info',
@@ -65,6 +74,10 @@ class ApplicationController extends Controller
             ]);
 
             return back();
+        }
+
+        if (! $request->user()->mailAccount()->exists()) {
+            throw ValidationException::withMessages(['application' => __('Connect your mailbox in Settings → Email before sending applications.')]);
         }
 
         $application->update(['status' => 'sending']);

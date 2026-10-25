@@ -76,6 +76,15 @@ return [
     'home' => '/dashboard',
 
     /*
+    | After verifying their email, send users to the page where they connect
+    | the mailbox their applications are sent from.
+    */
+
+    'redirects' => [
+        'email-verification' => '/settings/email',
+    ],
+
+    /*
     |--------------------------------------------------------------------------
     | Fortify Routes Prefix / Subdomain
     |--------------------------------------------------------------------------
@@ -145,6 +154,7 @@ return [
     'features' => [
         Features::registration(),
         Features::resetPasswords(),
+        Features::emailVerification(),
     ],
 
 ];

@@ -38,12 +38,36 @@ return [
     |--------------------------------------------------------------------------
     |
     | Applications are only ever sent after explicit, hash-bound approval. Even
-    | then, nothing leaves the app unless send_emails is true; the message goes
-    | through Laravel's configured mailer (MAIL_MAILER) with the CV attached.
+    | then, nothing leaves the app unless send_emails is true. The message is
+    | sent from the user's verified login email through their own mailbox,
+    | which they connect in Settings with an app password for one of the
+    | providers below. Laravel's own mailer (MAIL_MAILER) is only used for
+    | account emails such as verification links and password resets.
     |
     */
 
     'send_emails' => (bool) env('JOBPILOT_SEND_EMAILS', false),
+
+    'mail_providers' => [
+        'gmail' => [
+            'label' => 'Gmail / Google Workspace',
+            'host' => 'smtp.gmail.com',
+            'port' => 587,
+            'app_password_url' => 'https://myaccount.google.com/apppasswords',
+        ],
+        'yahoo' => [
+            'label' => 'Yahoo Mail',
+            'host' => 'smtp.mail.yahoo.com',
+            'port' => 465,
+            'app_password_url' => 'https://login.yahoo.com/account/security',
+        ],
+        'icloud' => [
+            'label' => 'iCloud Mail',
+            'host' => 'smtp.mail.me.com',
+            'port' => 587,
+            'app_password_url' => 'https://account.apple.com/account/manage',
+        ],
+    ],
 
     /*
     |--------------------------------------------------------------------------

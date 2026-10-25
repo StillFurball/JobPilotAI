@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Database\Factories\UserFactory;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -25,10 +26,11 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read CandidateProfile|null $candidateProfile
+ * @property-read MailAccount|null $mailAccount
  */
 #[Fillable(['name', 'email', 'password'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
@@ -54,6 +56,16 @@ class User extends Authenticatable
     public function candidateProfile(): HasOne
     {
         return $this->hasOne(CandidateProfile::class);
+    }
+
+    /**
+     * The mailbox applications are sent from (one per user).
+     *
+     * @return HasOne<MailAccount, $this>
+     */
+    public function mailAccount(): HasOne
+    {
+        return $this->hasOne(MailAccount::class);
     }
 
     /**

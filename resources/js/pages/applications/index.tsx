@@ -20,12 +20,18 @@ import {
 import { formatDate, shortHash } from '@/lib/jobpilot';
 import { index as applicationsIndex, send } from '@/routes/applications';
 import { index as draftsIndex } from '@/routes/drafts';
+import { edit as editMailAccount } from '@/routes/mail-account';
 import type { Application } from '@/types';
 import PageHeader from '@/components/page-header';
 
 type Props = {
     applications: Application[];
     sendEnabled: boolean;
+    sender: {
+        email: string;
+        emailVerified: boolean;
+        mailboxConnected: boolean;
+    };
 };
 
 const FILTERS = [
@@ -39,7 +45,10 @@ const FILTERS = [
 export default function ApplicationsIndex({
     applications,
     sendEnabled,
+    sender,
 }: Props) {
+    const senderReady =
+        sender.emailVerified && (!sendEnabled || sender.mailboxConnected);
     const [filter, setFilter] = useState('');
     const [sending, setSending] = useState<number | null>(null);
     const { errors } = usePage().props as { errors: Record<string, string> };
@@ -102,8 +111,26 @@ export default function ApplicationsIndex({
                                 <span>
                                     Safe mode: sending re-verifies the approval
                                     but does not email anyone. Set{' '}
-                                    <code>JOBPILOT_SEND_EMAILS=true</code> and
-                                    configure your mailer to send for real.
+                                    <code>JOBPILOT_SEND_EMAILS=true</code> to
+                                    send for real.
+                                </span>
+                            </div>
+                        </CardContent>
+                    )}
+                    {!senderReady && (
+                        <CardContent>
+                            <div className="flex items-start gap-2 rounded-md border-l-4 border-l-strip bg-strip-soft p-3 text-foreground">
+                                <Mail className="mt-0.5 size-4 shrink-0" />
+                                <span>
+                                    {sender.emailVerified
+                                        ? `Applications are sent from ${sender.email} through your own mailbox. Connect it with an app password first.`
+                                        : `Applications are sent from ${sender.email}. Verify that address before sending.`}{' '}
+                                    <Link
+                                        href={editMailAccount()}
+                                        className="font-medium underline underline-offset-4"
+                                    >
+                                        Open email settings
+                                    </Link>
                                 </span>
                             </div>
                         </CardContent>
@@ -198,7 +225,9 @@ export default function ApplicationsIndex({
                                         application.status === 'uncertain') && (
                                         <Button
                                             size="sm"
-                                            disabled={sending !== null}
+                                            disabled={
+                                                sending !== null || !senderReady
+                                            }
                                             onClick={() =>
                                                 dispatch(application)
                                             }

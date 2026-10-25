@@ -3,8 +3,10 @@
 use App\Models\Application;
 use App\Models\ApplicationDraft;
 use App\Models\JobListing;
+use App\Models\MailAccount;
 use App\Models\User;
 use App\Models\WorkflowRun;
+use App\Services\JobPilot\UserMailer;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
@@ -249,10 +251,17 @@ test('sending is blocked in safe mode', function () {
     Mail::assertNothingOutgoing();
 });
 
-test('approved applications are emailed with the cv when sending is enabled', function () {
-    config(['jobpilot.send_emails' => true, 'mail.default' => 'array']);
+test('approved applications are emailed from the users own mailbox with the cv', function () {
+    config(['jobpilot.send_emails' => true]);
 
-    $user = User::factory()->create();
+    $user = User::factory()->create(['name' => 'Budi', 'email' => 'budi@gmail.com']);
+    $account = MailAccount::factory()->for($user)->create();
+    $mailbox = app('mail.manager')->mailer('array');
+    $this->partialMock(UserMailer::class)
+        ->shouldReceive('mailerFor')
+        ->withArgs(fn (MailAccount $a) => $a->is($account))
+        ->andReturn($mailbox);
+
     $draft = generateDraft($user);
     $this->actingAs($user)->post(route('drafts.approve', $draft), ['content_hash' => $draft->content_hash]);
 
@@ -263,9 +272,40 @@ test('approved applications are emailed with the cv when sending is enabled', fu
         ->and($application->provider_message_id)->not->toBeEmpty()
         ->and($draft->refresh()->status)->toBe('sent');
 
-    $sent = app('mailer')->getSymfonyTransport()->messages();
+    $sent = $mailbox->getSymfonyTransport()->messages();
+    $message = $sent->first()->getOriginalMessage();
     expect($sent)->toHaveCount(1)
-        ->and($sent->first()->getOriginalMessage()->getAttachments())->toHaveCount(1);
+        ->and($message->getFrom()[0]->getAddress())->toBe('budi@gmail.com')
+        ->and($message->getAttachments())->toHaveCount(1);
+});
+
+test('unverified users cannot send applications', function () {
+    config(['jobpilot.send_emails' => true]);
+
+    $user = User::factory()->unverified()->create();
+    MailAccount::factory()->for($user)->create();
+    $draft = generateDraft($user);
+    $this->actingAs($user)->post(route('drafts.approve', $draft), ['content_hash' => $draft->content_hash]);
+
+    $this->actingAs($user)
+        ->post(route('applications.send', Application::sole()))
+        ->assertSessionHasErrors('application');
+
+    expect(Application::sole()->status)->toBe('approved');
+});
+
+test('sending requires a connected mailbox', function () {
+    config(['jobpilot.send_emails' => true]);
+
+    $user = User::factory()->create();
+    $draft = generateDraft($user);
+    $this->actingAs($user)->post(route('drafts.approve', $draft), ['content_hash' => $draft->content_hash]);
+
+    $this->actingAs($user)
+        ->post(route('applications.send', Application::sole()))
+        ->assertSessionHasErrors('application');
+
+    expect(Application::sole()->status)->toBe('approved');
 });
 
 test('sending fails if the draft changed after approval', function () {
